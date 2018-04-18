@@ -1,0 +1,7 @@
+from pyspark import SparkConf,SparkContext
+conf = sparkConf().setAppName("dailyrevenue_product").setMaster("yarn_client")
+sc = SparkContext(conf = conf)
+raw_rdd = sc.TextFile("/user/cloudera/input/010990-99999-2017")
+rdd_map = raw_rdd.map(lambda x: ((x.split(" ")[0]+x.split(" ")[1]+x.split(" ")[2]),x.split(" ")[4])).reduceByKey(lambda x,y:x if(x<y)else y)
+rdd_map.take(10)
+rdd_map.saveAsTextFile("/user/cloudera/maximum_temp")
